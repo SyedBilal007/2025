@@ -1,4 +1,12 @@
 /* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -9,24 +17,141 @@ body {
     height: 100vh;
     background: linear-gradient(135deg, #ffafbd, #ffc3a0);
     color: #333;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Floating hearts animation */
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.heart {
+    position: absolute;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    animation: float 15s infinite ease-in-out;
+    opacity: 0;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
 }
 
 .wrapper {
     position: relative;
-    width: 90%;
+    width: min(92vw, 420px);
     max-width: 500px;
     text-align: center;
     background: white;
-    padding: 30px 20px;
+    padding: min(30px, 4vw) min(20px, 5vw);
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    animation: slideUp 0.8s ease-out, fadeIn 0.8s ease-out;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrapper {
+        animation: fadeIn 0.8s ease-out;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .question {
-    font-size: 24px;
+    font-size: clamp(20px, 5vw, 24px);
     font-weight: bold;
     margin-bottom: 20px;
     color: #333;
+    animation: pulse 2s ease-in-out infinite;
+    position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .question {
+        animation: none;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.question::after {
+    content: '💕';
+    display: inline-block;
+    margin-left: 10px;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .question::after {
+        animation: none;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .gif {
@@ -35,22 +160,89 @@ body {
     margin-bottom: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeInGif 1s ease-out;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.gif:hover {
+    transform: scale(1.02);
+}
+
+@keyframes fadeInGif {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .btn-group {
     display: flex;
     justify-content: space-around;
     gap: 15px;
+    position: relative;
 }
 
 button {
     padding: 12px 30px;
-    font-size: 18px;
+    min-height: 44px;
+    font-size: clamp(16px, 4vw, 18px);
     font-weight: bold;
     border: none;
     border-radius: 50px;
     cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: buttonAppear 0.8s ease-out backwards;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button {
+        animation: fadeIn 0.8s ease-out backwards;
+    }
+}
+
+@keyframes buttonAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.yes-btn {
+    animation-delay: 0.2s;
+}
+
+.no-btn {
+    animation-delay: 0.4s;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:active::before {
+    width: 300px;
+    height: 300px;
 }
 
 button:focus {
@@ -60,22 +252,125 @@ button:focus {
 .yes-btn {
     background-color: #4caf50;
     color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+    transition: all 0.3s ease;
 }
 
 .yes-btn:hover {
     background-color: #45a049;
-    transform: scale(1.05);
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+}
+
+.yes-btn:active {
+    transform: scale(0.95);
 }
 
 .no-btn {
     position: absolute;
     background-color: #ff4d4d;
     color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.4);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), background-color 0.3s ease;
+    transform: translate(0, 0);
+    will-change: transform;
 }
 
 .no-btn:hover {
     background-color: #e43e3e;
-    transform: scale(1.05);
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.6);
+}
+
+/* Typing animation for text */
+.typing {
+    border-right: 2px solid #333;
+    animation: blink 0.75s step-end infinite;
+}
+
+@keyframes blink {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: #333;
+    }
+}
+
+/* Celebration animation */
+.celebrate {
+    animation: celebrate 0.6s ease-out;
+}
+
+@keyframes celebrate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Hide animation */
+.hide {
+    animation: hideButton 0.5s ease-out forwards;
+}
+
+@keyframes hideButton {
+    to {
+        opacity: 0;
+        transform: scale(0) rotate(180deg);
+    }
+}
+
+/* Shake animation for No button */
+@keyframes shake {
+    0%, 100% { 
+        transform: translateX(0) rotate(0deg); 
+    }
+    25% { 
+        transform: translateX(-10px) rotate(-5deg); 
+    }
+    75% { 
+        transform: translateX(10px) rotate(5deg); 
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hearts-container {
+        display: none;
+    }
+    
+    .question::after {
+        animation: none;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 480px) {
+    .wrapper {
+        width: 92vw;
+        padding: 20px 15px;
+    }
+    
+    .gif {
+        margin-bottom: 15px;
+    }
+    
+    button {
+        padding: 14px 24px;
+        font-size: 16px;
+    }
 }
